@@ -1,0 +1,6 @@
+Flask
+google-genai
+anthropic
+python-dotenv
+gunicorn
+Flask-Limiter

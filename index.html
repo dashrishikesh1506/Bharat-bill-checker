@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bharat Bill Checker — AI Utility Bill Auditor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root {
+      --saffron: #f97316;
+      --saffron-glow: rgba(249, 115, 22, 0.35);
+      --white-pure: #ffffff;
+      --green-trico: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.35);
+      --navy-dark: #0a0b12;
+      --card-bg: rgba(15, 18, 28, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-muted: #94a3b8;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      background: 
+        radial-gradient(circle at 12% 8%, rgba(249, 115, 22, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 88% 10%, rgba(16, 185, 129, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 50% 60%, rgba(30, 41, 59, 0.22) 0%, transparent 65%),
+        linear-gradient(180deg, #07080c 0%, #0c0e18 50%, #05060a 100%);
+      background-attachment: fixed;
+      color: #f1f5f9;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient top tricolor gradient line */
+    .tricolor-stripe {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, #f97316 0%, #ffffff 50%, #10b981 100%);
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(7, 8, 14, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* Tri-color Logo */
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      user-select: none;
+      text-decoration: none;
+    }
+    .logo-bharat {
+      color: #f97316;
+      text-shadow: 0 0 20px var(--saffron-glow);
+    }
+    .logo-bill {
+      color: #ffffff;
+      text-shadow: 0 0 16px rgba(255, 255, 255, 0.35);
+      margin: 0 2px;
+    }
+    .logo-checker {
+      color: #10b981;
+      text-shadow: 0 0 20px var(--green-glow);
+    }
+    .logo-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-badge {
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .key-btn {
+      padding: 6px 14px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .key-btn:hover {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.08);
+      color: #fff;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+    }
+    .status-dot.active {
+      background: #10b981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .lang-toggle {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      padding: 3px;
+    }
+    .lang-btn {
+      padding: 5px 14px;
+      border-radius: 99px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: #f97316;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
+    }
+
+    /* Tabs Bar */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 36px 20px 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 11px 24px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 18, 28, 0.6);
+      backdrop-filter: blur(10px);
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover {
+      border-color: rgba(249, 115, 22, 0.5);
+      color: #f1f5f9;
+      transform: translateY(-1px);
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(239, 68, 68, 0.9));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 18px rgba(249, 115, 22, 0.35);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 55px 20px 30px;
+      position: relative;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(249, 115, 22, 0.1);
+      color: #fb923c;
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      padding: 6px 16px;
+      border-radius: 99px;
+      margin-bottom: 22px;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5.5vw, 60px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .hero h1 span.gradient-word {
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 40%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 16px;
+      color: #94a3b8;
+      max-width: 580px;
+      margin: 0 auto 34px;
+      line-height: 1.7;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px 24px;
+      border-radius: 14px;
+      min-width: 140px;
+    }
+    .stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fb923c;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* Cards & Layout */
+    .main-section {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 38px;
+      margin-top: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .card > p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 26px;
+    }
+
+    .bill-types {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .bill-type-btn {
+      flex: 1;
+      padding: 14px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: #94a3b8;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .bill-type-btn .icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .bill-type-btn:hover {
+      border-color: rgba(249, 115, 22, 0.4);
+      background: rgba(249, 115, 22, 0.05);
+      color: #f1f5f9;
+    }
+    .bill-type-btn.active {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.12);
+      color: #fb923c;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+    }
+
+    /* Upload Area */
+    .drop-zone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 44px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 22px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.015);
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.04);
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.12);
+    }
+    .drop-zone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+      display: inline-block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+    }
+    .drop-zone h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .drop-zone p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+    }
+    .file-selected {
+      font-size: 13px;
+      color: #10b981;
+      margin-top: 10px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 99px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    /* Main CTA Button */
+    .analyze-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f97316 0%, #ef4444 60%, #e11d48 100%);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .analyze-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px -5px rgba(249, 115, 22, 0.5);
+    }
+    .analyze-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      border-top-color: #f97316;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading p {
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Results Screen */
+    .results {
+      display: none;
+      margin-top: 30px;
+    }
+    .trust-card {
+      background: rgba(10, 13, 22, 0.9);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+    .trust-score-ring {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .trust-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .trust-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+    .trust-period {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .info-box {
+      background: rgba(10, 13, 22, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .info-box-label {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .info-box-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .info-box-value.danger {
+      color: #ef4444;
+      text-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+    }
+    .info-box-value.safe {
+      color: #10b981;
+      text-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      margin-top: 14px;
+      letter-spacing: -0.01em;
+    }
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .breakdown-item {
+      background: rgba(10, 13, 22, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .breakdown-item-left {
+      flex: 1;
+    }
+    .breakdown-item-name {
+      font-size: 13.5px;
+      color: #f1f5f9;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .breakdown-item-exp {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .breakdown-item-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .breakdown-item-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .status-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .status-ok {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-suspicious {
+      background: rgba(249, 115, 22, 0.15);
+      color: #fb923c;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+    }
+    .status-overcharged {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .red-flags-box {
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .red-flag-item {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      color: #fca5a5;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .red-flag-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 14px;
+      padding: 18px;
+      font-size: 13.5px;
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .reset-btn {
+      width: 100%;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      color: #cbd5e1;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    /* Chat Section */
+    .chat-section {
+      display: none;
+      margin-top: 30px;
+    }
+    .chat-box {
+      background: rgba(10, 13, 22, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 14px;
+      max-height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-msg {
+      max-width: 85%;
+      line-height: 1.5;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 14px 14px 4px 14px;
+      padding: 11px 16px;
+      font-size: 13px;
+      color: #fff;
+    }
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px 14px 14px 4px;
+      padding: 11px 16px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      background: rgba(10, 13, 22, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus {
+      border-color: #f97316;
+    }
+    .chat-send {
+      padding: 13px 22px;
+      background: #f97316;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chat-send:hover {
+      opacity: 0.9;
+    }
+    .chat-empty {
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+      padding: 24px;
+    }
+
+    /* Compare Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .drop-zone-sm {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 26px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: rgba(255, 255, 255, 0.015);
+    }
+    .drop-zone-sm:hover {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.04);
+    }
+    .drop-zone-sm input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-zone-sm .label {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    .drop-zone-sm .fname {
+      font-size: 11.5px;
+      color: #10b981;
+      margin-top: 6px;
+      font-weight: 600;
+      min-height: 18px;
+    }
+
+    .compare-results {
+      display: none;
+      margin-top: 30px;
+    }
+    .compare-card {
+      background: rgba(10, 13, 22, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 14px;
+    }
+    .compare-grid-res {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .compare-bill-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .compare-bill-label {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .compare-bill-period {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .compare-bill-amount {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .compare-arrow {
+      font-size: 24px;
+      color: #64748b;
+    }
+    .diff-badge {
+      display: inline-block;
+      padding: 7px 18px;
+      border-radius: 99px;
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .diff-up {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .diff-down {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .compare-reason {
+      font-size: 13.5px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+    .compare-advice {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 13.5px;
+      color: #fb923c;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* Help & Support Tab Styles */
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .support-card {
+      background: rgba(10, 13, 22, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 22px;
+    }
+    .support-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .support-card p {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .support-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .support-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .support-pill-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+    .support-pill-desc {
+      font-size: 11.5px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .helpline-box {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(16, 185, 129, 0.12));
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    .helpline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .helpline-row:last-child {
+      border-bottom: none;
+    }
+    .helpline-name {
+      font-size: 13px;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+    .helpline-num {
+      font-size: 14px;
+      color: #fb923c;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+    .template-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin-bottom: 12px;
+    }
+    .copy-btn {
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: #10b981;
+      border-color: #10b981;
+      color: #fff;
+    }
+
+    /* How Section */
+    .how-section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .how-section h2 {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+    }
+    .step-card {
+      text-align: center;
+      padding: 26px 18px;
+      background: rgba(15, 18, 28, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      transition: transform 0.2s;
+    }
+    .step-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(249, 115, 22, 0.3);
+    }
+    .step-icon {
+      font-size: 32px;
+      margin-bottom: 14px;
+    }
+    .step-num {
+      font-size: 10px;
+      color: #fb923c;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 34px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+      color: #64748b;
+      background: rgba(7, 8, 14, 0.9);
+    }
+    footer span {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-card {
+      background: #0f121c;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 460px;
+      width: 90%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+    }
+    .modal-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .modal-card p {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .modal-input {
+      width: 100%;
+      background: #080a10;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: #fff;
+      font-size: 13.5px;
+      font-family: inherit;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    .modal-input:focus {
+      border-color: #f97316;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .modal-btn-cancel {
+      padding: 11px 20px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-btn-save {
+      padding: 11px 22px;
+      background: #f97316;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tricolor-stripe"></div>
+
+<nav>
+  <a href="#" class="logo">
+    <span class="logo-bharat">Bharat</span><span class="logo-bill">Bill</span><span class="logo-checker">Checker</span>
+    <span class="logo-badge">AI</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-badge" title="AI service status">
+      <span class="status-dot" id="keyDot"></span>
+      <span id="keyLabel">Checking service</span>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('english')">EN</button>
+      <button class="lang-btn" id="btn-hi" onclick="setLang('hindi')">हिं</button>
+    </div>
+    <div class="nav-badge" id="txt-badge">🇮🇳 Made for India</div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag" id="txt-hero-tag">⚡ India's 1st AI Utility Bill Auditor</div>
+  <h1 id="txt-hero-title">Stop Getting <span class="gradient-word">Overcharged</span><br/>On Your Utility Bills</h1>
+  <p id="txt-hero-desc">Upload your electricity, water, or gas bill (photo or PDF). Our AI audits tariff slabs, energy charges, fixed taxes, and fuel surcharges instantly.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">₹800+</div><div class="stat-label" id="txt-stat1">Avg overcharge spotted</div></div>
+    <div class="stat"><div class="stat-num">3 Slabs</div><div class="stat-label" id="txt-stat2">Tariff audit depth</div></div>
+    <div class="stat"><div class="stat-num">&lt; 5s</div><div class="stat-label" id="txt-stat3">Instant AI audit</div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tab-btn-analyze" onclick="switchTab('analyze',this)">
+    <span>🔍</span> <span id="txt-tab-analyze">Analyze Bill</span>
+  </button>
+  <button class="tab-btn" id="tab-btn-compare" onclick="switchTab('compare',this)">
+    <span>📊</span> <span id="txt-tab-compare">Compare Two Bills</span>
+  </button>
+  <button class="tab-btn" id="tab-btn-support" onclick="switchTab('support',this)">
+    <span>🛡️</span> <span id="txt-tab-support">Help & Consumer Rights</span>
+  </button>
+</div>
+
+<div class="main-section">
+
+  <!-- TAB 1: ANALYZE -->
+  <div id="tab-analyze" class="tab-content active">
+    <div class="card">
+      <h2 id="txt-analyze-head">Analyze Your Utility Bill</h2>
+      <p id="txt-analyze-sub">Upload a clear photo or PDF bill to verify if your charges and meter units match state tariffs</p>
+      
+      <div class="bill-types">
+        <button class="bill-type-btn active" onclick="selectBillType('electricity',this)"><span class="icon">⚡</span><span id="txt-type-elec">Electricity</span></button>
+        <button class="bill-type-btn" onclick="selectBillType('water',this)"><span class="icon">💧</span><span id="txt-type-water">Water</span></button>
+        <button class="bill-type-btn" onclick="selectBillType('gas',this)"><span class="icon">🔥</span><span id="txt-type-gas">Gas / PNG</span></button>
+      </div>
+
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFile(this)"/>
+        <div class="drop-icon">📄</div>
+        <h3 id="txt-drop-title">Drop your bill PDF or photo here</h3>
+        <p id="txt-drop-sub">Supports PDF, JPG, PNG, WEBP · Max 15MB</p>
+        <div class="file-selected" id="fileName" style="display:none"></div>
+      </div>
+
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyzeBill()" disabled>
+        <span>🔍</span> <span id="txt-analyze-btn">Analyze My Bill</span>
+      </button>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p id="txt-loading-msg">AI is reading meter units, tariff slabs, and calculating charges...</p>
+      </div>
+
+      <div class="results" id="results"></div>
+
+      <div class="chat-section" id="chatSection">
+        <div class="section-title" id="txt-chat-title">💬 Ask AI About Your Bill</div>
+        <div class="chat-box" id="chatBox">
+          <div class="chat-empty" id="txt-chat-empty">Analysis complete! Ask any question about your bill charges 👆</div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" type="text" placeholder="e.g. Why is fuel surcharge added? or Is my meter reading correct?" onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" id="txt-chat-send" onclick="sendChat()">Ask AI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: COMPARE -->
+  <div id="tab-compare" class="tab-content">
+    <div class="card">
+      <h2 id="txt-compare-head">Compare Two Months' Bills</h2>
+      <p id="txt-compare-sub">Upload bills from two consecutive months to uncover why your bill spiked and which charge surged</p>
+      
+      <div class="bill-types">
+        <button class="bill-type-btn active" onclick="selectBillType('electricity',this)"><span class="icon">⚡</span><span id="txt-type-elec2">Electricity</span></button>
+        <button class="bill-type-btn" onclick="selectBillType('water',this)"><span class="icon">💧</span><span id="txt-type-water2">Water</span></button>
+        <button class="bill-type-btn" onclick="selectBillType('gas',this)"><span class="icon">🔥</span><span id="txt-type-gas2">Gas / PNG</span></button>
+      </div>
+
+      <div class="compare-grid">
+        <div class="drop-zone-sm">
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleCompareFile(this,1)"/>
+          <div style="font-size:30px">📄</div>
+          <div class="label" id="txt-older-label">Older Bill (Month 1)</div>
+          <div class="fname" id="cfile1">No file chosen</div>
+        </div>
+        <div class="drop-zone-sm">
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleCompareFile(this,2)"/>
+          <div style="font-size:30px">📄</div>
+          <div class="label" id="txt-recent-label">Recent Bill (Month 2)</div>
+          <div class="fname" id="cfile2">No file chosen</div>
+        </div>
+      </div>
+
+      <button class="analyze-btn" id="compareBtn" onclick="compareBills()" disabled>
+        <span>📊</span> <span id="txt-compare-btn">Compare My Bills</span>
+      </button>
+
+      <div class="loading" id="compareLoading">
+        <div class="spinner"></div>
+        <p id="txt-compare-loading">AI is comparing tariff rates, consumption deltas, and seasonal spikes...</p>
+      </div>
+
+      <div class="compare-results" id="compareResults"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: HELP & SUPPORT -->
+  <div id="tab-support" class="tab-content">
+    <div class="card">
+      <h2 id="txt-support-head">🛡️ Consumer Help Desk & Tariff Guide</h2>
+      <p id="txt-support-sub">Everything you need to know about Indian electricity tariffs, hidden DISCOM fees, and your legal rights under the Electricity Act 2003.</p>
+
+      <div class="support-grid">
+        
+        <!-- Tariff Decoding -->
+        <div class="support-card">
+          <h3 id="txt-card1-h">💡 Understanding Your Bill Breakdown</h3>
+          <p id="txt-card1-p">Indian utility bills are composed of 4 key components. Here is what each means:</p>
+          <div class="support-pill-grid">
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-p1-t">Fixed / Demand Charges</div>
+              <div class="support-pill-desc" id="txt-p1-d">Monthly maintenance fee based on your Sanctioned Load (kW). Payable even if usage is 0 units.</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-p2-t">Telescopic Slab Energy Charge</div>
+              <div class="support-pill-desc" id="txt-p2-d">Unit price rises with consumption (e.g. 0-100 units @ ₹3.50, 101-200 @ ₹5.50, &gt;200 @ ₹8.00).</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-p3-t">FPPPA / FAC (Fuel Surcharge)</div>
+              <div class="support-pill-desc" id="txt-p3-d">Cost of coal/gas adjustment passed onto consumers monthly. Often causes sudden unexpected bill jumps!</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-p4-t">Electricity Duty & Taxes</div>
+              <div class="support-pill-desc" id="txt-p4-d">State tax (usually 5% to 15%) levied on total energy charges by your state government.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Overcharge Traps -->
+        <div class="support-card">
+          <h3 id="txt-card2-h">⚠️ Top 3 Bill Overcharge Traps in India</h3>
+          <div class="support-pill-grid">
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-t1-t">1. Delayed Meter Reading (45-Day Trap)</div>
+              <div class="support-pill-desc" id="txt-t1-d">If the reader comes after 40-45 days instead of 30, your units cross into high tariff slabs, unfairly inflating your bill!</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-t2-t">2. 'Door Lock' Average Billing</div>
+              <div class="support-pill-desc" id="txt-t2-d">If the reader claims your house was locked, they bill on provisional inflated estimates instead of actual meter units.</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-t3-t">3. Missing Security Deposit Interest</div>
+              <div class="support-pill-desc" id="txt-t3-d">DISCOMs hold your security deposit and MUST pay 6-7% bank interest credited directly to your bill each year!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Consumer Rights & Dispute Process -->
+        <div class="support-card">
+          <h3 id="txt-card3-h">⚖️ How to Dispute an Incorrect Bill</h3>
+          <p id="txt-card3-p">Under Section 42 of the Indian Electricity Act 2003, every consumer has the legal right to challenge unfair bills through this 3-tier system:</p>
+          <div class="support-pill-grid">
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-r1-t">Tier 1: DISCOM Sub-Division</div>
+              <div class="support-pill-desc" id="txt-r1-d">Submit written complaint or call 1912. Get a formal complaint reference number.</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-r2-t">Tier 2: CGRF Forum</div>
+              <div class="support-pill-desc" id="txt-r2-d">If DISCOM doesn't fix it within 30 days, escalate to Consumer Grievance Redressal Forum.</div>
+            </div>
+            <div class="support-pill">
+              <div class="support-pill-title" id="txt-r3-t">Tier 3: Electricity Ombudsman</div>
+              <div class="support-pill-desc" id="txt-r3-d">Appointed by the State Commission. Ombudsman orders are legally binding on power companies!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helpline Directory -->
+        <div class="helpline-box">
+          <h3 style="color:#fff; font-size:15px; margin-bottom:12px;" id="txt-helpline-h">📞 National Consumer Helplines</h3>
+          <div class="helpline-row">
+            <span class="helpline-name" id="txt-hl1-n">National Electricity Emergency & Complaints:</span>
+            <span class="helpline-num">1912 (Toll Free)</span>
+          </div>
+          <div class="helpline-row">
+            <span class="helpline-name" id="txt-hl2-n">National Consumer Helpline (NCH):</span>
+            <span class="helpline-num">1915</span>
+          </div>
+          <div class="helpline-row">
+            <span class="helpline-name" id="txt-hl3-n">Consumer Helpline WhatsApp:</span>
+            <span class="helpline-num">+91 88000 01915</span>
+          </div>
+        </div>
+
+        <!-- Grievance Template -->
+        <div class="support-card">
+          <h3 id="txt-card4-h">📝 Copy Formal Grievance Letter Template</h3>
+          <p id="txt-card4-p">Copy and customize this formal letter to email your power company or submit at your local sub-division office:</p>
+          <div class="template-box" id="letterTemplate">To,
+The Assistant Executive Engineer / Sub-Divisional Officer,
+[DISCOM Name, e.g. BESCOM / MSEDCL / UPPCL / TNEB / Tata Power],
+[Your Area / Sub-Division Office Address]
+
+Subject: Formal Dispute against Inflated Utility Bill for Consumer No. [Your Consumer No.]
+
+Respected Sir/Madam,
+
+I am a consumer of electricity under Consumer / CA Number [Your Consumer Number] at [Your Registered Address]. 
+
+I am writing to formally dispute the bill dated [Bill Date] for the billing period [Month/Year], amounting to ₹[Bill Amount]. 
+
+On auditing my bill, I noticed the following discrepancy:
+1. Excessive units billed compared to average consumption of [Average Units] units.
+2. [Mention discrepancy: e.g. Extended 45-day billing period pushing units into higher slab / Incorrect provisional reading / Unadjusted security deposit interest].
+
+As per the Consumer Rights under the Electricity Act 2003 and State Supply Code, I request:
+1. An inspection and verification of my meter reading.
+2. A corrected bill issued based on actual telescopic slabs.
+3. Stay on power disconnection until this dispute is resolved.
+
+Thanking you,
+Yours sincerely,
+[Your Name]
+Phone: [Your Phone Number]
+Date: [Current Date]</div>
+          <button class="copy-btn" id="txt-copy-btn" onclick="copyTemplate()">📋 Copy Letter to Clipboard</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="how-section">
+  <h2 id="txt-how-title">How Bharat Bill Checker Protects You</h2>
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-icon">📤</div><div class="step-num">STEP 01</div><div class="step-title" id="txt-s1-t">Upload Bill</div><div class="step-desc" id="txt-s1-d">Photo or PDF of any Indian utility bill</div></div>
+    <div class="step-card"><div class="step-icon">🤖</div><div class="step-num">STEP 02</div><div class="step-title" id="txt-s2-t">AI Vision Audit</div><div class="step-desc" id="txt-s2-d">Extracts meter units, load, and line items</div></div>
+    <div class="step-card"><div class="step-icon">🔍</div><div class="step-num">STEP 03</div><div class="step-title" id="txt-s3-t">Tariff Check</div><div class="step-desc" id="txt-s3-d">Compares with state slabs and detects overcharges</div></div>
+    <div class="step-card"><div class="step-icon">💬</div><div class="step-num">STEP 04</div><div class="step-title" id="txt-s4-t">Chat & Redress</div><div class="step-desc" id="txt-s4-d">Ask questions and dispute incorrect bills</div></div>
+  </div>
+</div>
+
+<footer>
+  Built with ❤️ by <span>Hrishikesh Das</span> · Bharat Bill Checker
+</footer>
+
+<script>
+  let selectedBillType='electricity';
+  let selectedFile=null;
+  let compareFile1=null;
+  let compareFile2=null;
+  let currentLanguage='english';
+  let billContext='';
+
+  // Bilingual Dictionary (English & Hindi)
+  const translations = {
+    english: {
+      badge: "🇮🇳 Made for India",
+      heroTag: "⚡ India's 1st AI Utility Bill Auditor",
+      heroTitle: 'Stop Getting <span class="gradient-word">Overcharged</span><br/>On Your Utility Bills',
+      heroDesc: "Upload your electricity, water, or gas bill (photo or PDF). Our AI audits tariff slabs, energy charges, fixed taxes, and fuel surcharges instantly.",
+      stat1: "Avg overcharge spotted",
+      stat2: "Tariff audit depth",
+      stat3: "Instant AI audit",
+      tabAnalyze: "Analyze Bill",
+      tabCompare: "Compare Two Bills",
+      tabSupport: "Help & Consumer Rights",
+      analyzeHead: "Analyze Your Utility Bill",
+      analyzeSub: "Upload a clear photo or PDF bill to verify if your charges and meter units match state tariffs",
+      typeElec: "Electricity",
+      typeWater: "Water",
+      typeGas: "Gas / PNG",
+      dropTitle: "Drop your bill PDF or photo here",
+      dropSub: "Supports PDF, JPG, PNG, WEBP · Max 15MB",
+      analyzeBtn: "Analyze My Bill",
+      loadingMsg: "AI is reading meter units, tariff slabs, and calculating charges...",
+      chatTitle: "💬 Ask AI About Your Bill",
+      chatEmpty: "Analysis complete! Ask any question about your bill charges 👆",
+      chatSend: "Ask AI",
+      chatPlaceholder: "e.g. Why is fuel surcharge added? or Is my meter reading correct?",
+      compareHead: "Compare Two Months' Bills",
+      compareSub: "Upload bills from two consecutive months to uncover why your bill spiked and which charge surged",
+      olderLabel: "Older Bill (Month 1)",
+      recentLabel: "Recent Bill (Month 2)",
+      compareBtn: "Compare My Bills",
+      compareLoading: "AI is comparing tariff rates, consumption deltas, and seasonal spikes...",
+      supportHead: "🛡️ Consumer Help Desk & Tariff Guide",
+      supportSub: "Everything you need to know about Indian electricity tariffs, hidden DISCOM fees, and your legal rights under the Electricity Act 2003.",
+      card1H: "💡 Understanding Your Bill Breakdown",
+      card1P: "Indian utility bills are composed of 4 key components. Here is what each means:",
+      p1T: "Fixed / Demand Charges",
+      p1D: "Monthly maintenance fee based on your Sanctioned Load (kW). Payable even if usage is 0 units.",
+      p2T: "Telescopic Slab Energy Charge",
+      p2D: "Unit price rises with consumption (e.g. 0-100 units @ ₹3.50, 101-200 @ ₹5.50, >200 @ ₹8.00).",
+      p3T: "FPPPA / FAC (Fuel Surcharge)",
+      p3D: "Cost of coal/gas adjustment passed onto consumers monthly. Often causes sudden unexpected bill jumps!",
+      p4T: "Electricity Duty & Taxes",
+      p4D: "State tax (usually 5% to 15%) levied on total energy charges by your state government.",
+      card2H: "⚠️ Top 3 Bill Overcharge Traps in India",
+      t1T: "1. Delayed Meter Reading (45-Day Trap)",
+      t1D: "If the reader comes after 40-45 days instead of 30, your units cross into high tariff slabs, unfairly inflating your bill!",
+      t2T: "2. 'Door Lock' Average Billing",
+      t2D: "If the reader claims your house was locked, they bill on provisional inflated estimates instead of actual meter units.",
+      t3T: "3. Missing Security Deposit Interest",
+      t3D: "DISCOMs hold your security deposit and MUST pay 6-7% bank interest credited directly to your bill each year!",
+      card3H: "⚖️ How to Dispute an Incorrect Bill",
+      card3P: "Under Section 42 of the Indian Electricity Act 2003, every consumer has the legal right to challenge unfair bills through this 3-tier system:",
+      r1T: "Tier 1: DISCOM Sub-Division",
+      r1D: "Submit written complaint or call 1912. Get a formal complaint reference number.",
+      r2T: "Tier 2: CGRF Forum",
+      r2D: "If DISCOM doesn't fix it within 30 days, escalate to Consumer Grievance Redressal Forum.",
+      r3T: "Tier 3: Electricity Ombudsman",
+      r3D: "Appointed by the State Commission. Ombudsman orders are legally binding on power companies!",
+      helplineH: "📞 National Consumer Helplines",
+      hl1N: "National Electricity Emergency & Complaints:",
+      hl2N: "National Consumer Helpline (NCH):",
+      hl3N: "Consumer Helpline WhatsApp:",
+      card4H: "📝 Copy Formal Grievance Letter Template",
+      card4P: "Copy and customize this formal letter to email your power company or submit at your local sub-division office:",
+      copyBtn: "📋 Copy Letter to Clipboard",
+      howTitle: "How Bharat Bill Checker Protects You",
+      s1T: "Upload Bill", s1D: "Photo or PDF of any Indian utility bill",
+      s2T: "AI Vision Audit", s2D: "Extracts meter units, load, and line items",
+      s3T: "Tariff Check", s3D: "Compares with state slabs and detects overcharges",
+      s4T: "Chat & Redress", s4D: "Ask questions and dispute incorrect bills"
+    },
+    hindi: {
+      badge: "🇮🇳 भारत के लिए निर्मित",
+      heroTag: "⚡ भारत का पहला AI उपयोगिता बिल परीक्षक",
+      heroTitle: 'अपने बिजली-पानी बिलों पर <span class="gradient-word">अतिरिक्त वसूली</span> बंद करें',
+      heroDesc: "अपने बिजली, पानी या गैस बिल का फोटो या PDF अपलोड करें। हमारा AI टैरिफ स्लैब, यूनिट दर, फिक्स्ड चार्ज और फ्यूल सरचार्ज की तुरंत जांच करता है।",
+      stat1: "औसत अतिरिक्त शुल्क मिला",
+      stat2: "टैरिफ स्लैब जांच",
+      stat3: "तुरंत AI ऑडिट",
+      tabAnalyze: "बिल की जांच करें",
+      tabCompare: "दो बिलों की तुलना करें",
+      tabSupport: "सहायता और उपभोक्ता अधिकार",
+      analyzeHead: "अपने बिल की जांच करें",
+      analyzeSub: "यह जांचने के लिए स्पष्ट फोटो या PDF अपलोड करें कि क्या आपके मीटर यूनिट और शुल्क सही हैं",
+      typeElec: "बिजली",
+      typeWater: "पानी",
+      typeGas: "गैस / PNG",
+      dropTitle: "अपना बिल PDF या फोटो यहाँ डालें",
+      dropSub: "PDF, JPG, PNG, WEBP समर्थित · अधिकतम 15MB",
+      analyzeBtn: "मेरा बिल जांचें",
+      loadingMsg: "AI मीटर रीडिंग, टैरिफ स्लैब और शुल्कों की गणना कर रहा है...",
+      chatTitle: "💬 अपने बिल के बारे में AI से पूछें",
+      chatEmpty: "विश्लेषण पूरा हुआ! बिल शुल्कों के बारे में कोई भी प्रश्न पूछें 👆",
+      chatSend: "पूछें",
+      chatPlaceholder: "उदा: फ्यूल सरचार्ज क्यों जुड़ा है? या क्या मेरी मीटर रीडिंग सही है?",
+      compareHead: "दो महीनों के बिलों की तुलना करें",
+      compareSub: "यह जानने के लिए दो बिल अपलोड करें कि बिल में अचानक वृद्धि क्यों हुई और कौन सा शुल्क बढ़ा",
+      olderLabel: "पुराना बिल (महीना 1)",
+      recentLabel: "नया बिल (महीना 2)",
+      compareBtn: "बिलों की तुलना करें",
+      compareLoading: "AI दोनों बिलों की खपत, यूनिट दरों और मौसमी उछाल की तुलना कर रहा है...",
+      supportHead: "🛡️ उपभोक्ता सहायता डेस्क एवं टैरिफ गाइड",
+      supportSub: "भारतीय बिजली बिलिंग, छुपे हुए DISCOM शुल्क और विद्युत अधिनियम 2003 के तहत आपके कानूनी अधिकारों की पूरी जानकारी।",
+      card1H: "💡 अपने बिल ब्रेकडाउन को समझें",
+      card1P: "भारतीय बिलों में 4 मुख्य घटक होते हैं। जानिए हर शुल्क का सही अर्थ:",
+      p1T: "फिक्स्ड / डिमांड चार्ज",
+      p1D: "आपके स्वीकृत लोड (kW) पर आधारित मासिक शुल्क। 0 यूनिट खपत होने पर भी यह देय होता है।",
+      p2T: "टेलीस्कोपिक स्लैब एनर्जी चार्ज",
+      p2D: "खपत बढ़ने पर यूनिट दर बढ़ती है (जैसे 0-100 यूनिट @ ₹3.50, 101-200 @ ₹5.50, >200 @ ₹8.00)।",
+      p3T: "FPPPA / FAC (ईंधन अधिभार)",
+      p3D: "कोयला/गैस की लागत में बदलाव उपभोक्ताओं से वसूला जाता है। इससे बिल में अप्रत्याशित वृद्धि होती है!",
+      p4T: "विद्युत शुल्क एवं राज्य कर",
+      p4D: "राज्य सरकार द्वारा कुल ऊर्जा शुल्क पर लगाया जाने वाला कर (आमतौर पर 5% से 15%)।",
+      card2H: "⚠️ भारत में बिल ओवरचार्जिंग के 3 बड़े कारण",
+      t1T: "1. मीटर रीडिंग में देरी (45 दिनों का जाल)",
+      t1D: "यदि रीडर 30 की जगह 45 दिन बाद आता है, तो आपकी यूनिट्स महंगे स्लैब में चली जाती हैं और बिल बढ़ जाता है!",
+      t2T: "2. 'डोर लॉक' अनुमानित बिलिंग",
+      t2D: "रीडर दावा करता है कि घर बंद था, और वास्तविक मीटर यूनिट की जगह मनमाना औसत बिल बना देता है।",
+      t3T: "3. सिक्योरिटी डिपॉजिट पर ब्याज न मिलना",
+      t3D: "कंपनियों के पास आपकी सुरक्षा राशि जमा होती है, जिस पर उन्हें हर साल 6-7% ब्याज बिल में देना अनिवार्य है!",
+      card3H: "⚖️ गलत बिल का विरोध कैसे करें",
+      card3P: "विद्युत अधिनियम 2003 की धारा 42 के तहत, प्रत्येक उपभोक्ता को इस 3-स्तरीय प्रणाली से गलत बिल चुनौती देने का अधिकार है:",
+      r1T: "स्तर 1: DISCOM सब-डिवीजन",
+      r1D: "लिखित शिकायत दर्ज करें या 1912 पर कॉल करें। आधिकारिक शिकायत क्रमांक अवश्य प्राप्त करें।",
+      r2T: "स्तर 2: CGRF फोरम",
+      r2D: "यदि 30 दिनों में समाधान न हो, तो उपभोक्ता शिकायत निवारण फोरम (CGRF) में जाएं।",
+      r3T: "स्तर 3: विद्युत लोकपाल (Ombudsman)",
+      r3D: "राज्य आयोग द्वारा नियुक्त। लोकपाल का आदेश बिजली कंपनी के लिए कानूनी रूप से बाध्यकारी होता है!",
+      helplineH: "📞 राष्ट्रीय उपभोक्ता हेल्पलाइन",
+      hl1N: "राष्ट्रीय बिजली आपातकाल एवं शिकायत:",
+      hl2N: "राष्ट्रीय उपभोक्ता हेल्पलाइन (NCH):",
+      hl3N: "उपभोक्ता हेल्पलाइन व्हाट्सएप:",
+      card4H: "📝 औपचारिक शिकायत पत्र का प्रारूप",
+      card4P: "इस पत्र को कॉपी करके बिजली कंपनी को ईमेल करें या कार्यालय में जमा करें:",
+      copyBtn: "📋 पत्र कॉपी करें",
+      howTitle: "भारत बिल चेकर आपकी सुरक्षा कैसे करता है",
+      s1T: "बिल अपलोड करें", s1D: "किसी भी भारतीय बिल की फोटो या PDF डालें",
+      s2T: "AI विज़न ऑडिट", s2D: "मीटर रीडिंग, लोड और हर शुल्क की जांच करता है",
+      s3T: "टैरिफ सत्यापन", s3D: "सरकारी स्लैब से मिलान करके ओवरचार्ज पकड़ता है",
+      s4T: "चैट और समाधान", s4D: "सवाल पूछें और गलत बिल को सुधारने का मार्गदर्शन पाएं"
+    }
+  };
+
+  function setLang(lang){
+    currentLanguage = lang;
+    document.getElementById('btn-en').classList.toggle('active', lang==='english');
+    document.getElementById('btn-hi').classList.toggle('active', lang==='hindi');
+    applyLanguage(lang);
+  }
+
+  function applyLanguage(lang){
+    const t = translations[lang] || translations.english;
+    document.getElementById('txt-badge').textContent = t.badge;
+    document.getElementById('txt-hero-tag').textContent = t.heroTag;
+    document.getElementById('txt-hero-title').innerHTML = t.heroTitle;
+    document.getElementById('txt-hero-desc').textContent = t.heroDesc;
+    document.getElementById('txt-stat1').textContent = t.stat1;
+    document.getElementById('txt-stat2').textContent = t.stat2;
+    document.getElementById('txt-stat3').textContent = t.stat3;
+    document.getElementById('txt-tab-analyze').textContent = t.tabAnalyze;
+    document.getElementById('txt-tab-compare').textContent = t.tabCompare;
+    document.getElementById('txt-tab-support').textContent = t.tabSupport;
+    document.getElementById('txt-analyze-head').textContent = t.analyzeHead;
+    document.getElementById('txt-analyze-sub').textContent = t.analyzeSub;
+    document.getElementById('txt-type-elec').textContent = t.typeElec;
+    document.getElementById('txt-type-water').textContent = t.typeWater;
+    document.getElementById('txt-type-gas').textContent = t.typeGas;
+    document.getElementById('txt-drop-title').textContent = t.dropTitle;
+    document.getElementById('txt-drop-sub').textContent = t.dropSub;
+    document.getElementById('txt-analyze-btn').textContent = t.analyzeBtn;
+    document.getElementById('txt-loading-msg').textContent = t.loadingMsg;
+    document.getElementById('txt-chat-title').textContent = t.chatTitle;
+    document.getElementById('txt-chat-empty').textContent = t.chatEmpty;
+    document.getElementById('txt-chat-send').textContent = t.chatSend;
+    document.getElementById('chatInput').placeholder = t.chatPlaceholder;
+    document.getElementById('txt-compare-head').textContent = t.compareHead;
+    document.getElementById('txt-compare-sub').textContent = t.compareSub;
+    document.getElementById('txt-type-elec2').textContent = t.typeElec;
+    document.getElementById('txt-type-water2').textContent = t.typeWater;
+    document.getElementById('txt-type-gas2').textContent = t.typeGas;
+    document.getElementById('txt-older-label').textContent = t.olderLabel;
+    document.getElementById('txt-recent-label').textContent = t.recentLabel;
+    document.getElementById('txt-compare-btn').textContent = t.compareBtn;
+    document.getElementById('txt-compare-loading').textContent = t.compareLoading;
+    document.getElementById('txt-support-head').textContent = t.supportHead;
+    document.getElementById('txt-support-sub').textContent = t.supportSub;
+    document.getElementById('txt-card1-h').textContent = t.card1H;
+    document.getElementById('txt-card1-p').textContent = t.card1P;
+    document.getElementById('txt-p1-t').textContent = t.p1T;
+    document.getElementById('txt-p1-d').textContent = t.p1D;
+    document.getElementById('txt-p2-t').textContent = t.p2T;
+    document.getElementById('txt-p2-d').textContent = t.p2D;
+    document.getElementById('txt-p3-t').textContent = t.p3T;
+    document.getElementById('txt-p3-d').textContent = t.p3D;
+    document.getElementById('txt-p4-t').textContent = t.p4T;
+    document.getElementById('txt-p4-d').textContent = t.p4D;
+    document.getElementById('txt-card2-h').textContent = t.card2H;
+    document.getElementById('txt-t1-t').textContent = t.t1T;
+    document.getElementById('txt-t1-d').textContent = t.t1D;
+    document.getElementById('txt-t2-t').textContent = t.t2T;
+    document.getElementById('txt-t2-d').textContent = t.t2D;
+    document.getElementById('txt-t3-t').textContent = t.t3T;
+    document.getElementById('txt-t3-d').textContent = t.t3D;
+    document.getElementById('txt-card3-h').textContent = t.card3H;
+    document.getElementById('txt-card3-p').textContent = t.card3P;
+    document.getElementById('txt-r1-t').textContent = t.r1T;
+    document.getElementById('txt-r1-d').textContent = t.r1D;
+    document.getElementById('txt-r2-t').textContent = t.r2T;
+    document.getElementById('txt-r2-d').textContent = t.r2D;
+    document.getElementById('txt-r3-t').textContent = t.r3T;
+    document.getElementById('txt-r3-d').textContent = t.r3D;
+    document.getElementById('txt-helpline-h').textContent = t.helplineH;
+    document.getElementById('txt-hl1-n').textContent = t.hl1N;
+    document.getElementById('txt-hl2-n').textContent = t.hl2N;
+    document.getElementById('txt-hl3-n').textContent = t.hl3N;
+    document.getElementById('txt-card4-h').textContent = t.card4H;
+    document.getElementById('txt-card4-p').textContent = t.card4P;
+    document.getElementById('txt-copy-btn').textContent = t.copyBtn;
+    document.getElementById('txt-how-title').textContent = t.howTitle;
+    document.getElementById('txt-s1-t').textContent = t.s1T;
+    document.getElementById('txt-s1-d').textContent = t.s1D;
+    document.getElementById('txt-s2-t').textContent = t.s2T;
+    document.getElementById('txt-s2-d').textContent = t.s2D;
+    document.getElementById('txt-s3-t').textContent = t.s3T;
+    document.getElementById('txt-s3-d').textContent = t.s3D;
+    document.getElementById('txt-s4-t').textContent = t.s4T;
+    document.getElementById('txt-s4-d').textContent = t.s4D;
+  }
+
+  function switchTab(tab,btn){
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function selectBillType(type,btn){
+    selectedBillType=type;
+    btn.closest('.card').querySelectorAll('.bill-type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function handleFile(input){
+    if(input.files[0]){
+      selectedFile=input.files[0];
+      const fn = document.getElementById('fileName');
+      fn.textContent='✅ '+selectedFile.name;
+      fn.style.display='inline-block';
+      document.getElementById('analyzeBtn').disabled=false;
+    }
+  }
+
+  function handleCompareFile(input,num){
+    if(input.files[0]){
+      if(num===1){
+        compareFile1=input.files[0];
+        document.getElementById('cfile1').textContent='✅ '+compareFile1.name;
+      } else {
+        compareFile2=input.files[0];
+        document.getElementById('cfile2').textContent='✅ '+compareFile2.name;
+      }
+      if(compareFile1&&compareFile2)document.getElementById('compareBtn').disabled=false;
+    }
+  }
+
+  async function analyzeBill(){
+    if(!selectedFile)return;
+    document.getElementById('loading').style.display='block';
+    document.getElementById('results').style.display='none';
+    document.getElementById('chatSection').style.display='none';
+    document.getElementById('analyzeBtn').disabled=true;
+    const formData=new FormData();
+    formData.append('bill',selectedFile);
+    formData.append('bill_type',selectedBillType);
+    formData.append('language',currentLanguage);
+    try{
+      const res=await fetch('/analyze',{method:'POST',body:formData});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok){
+        throw new Error(data.error || ('Server returned error '+res.status));
+      }
+      billContext=JSON.stringify(data);
+      displayResults(data);
+      document.getElementById('chatSection').style.display='block';
+      const promptText = currentLanguage === 'hindi' 
+        ? 'विश्लेषण पूरा हुआ! अपने बिल के शुल्कों के बारे में कुछ भी पूछें 👆'
+        : 'Analysis complete! Ask me anything about your bill 👆';
+      document.getElementById('chatBox').innerHTML=`<div class="chat-empty">${promptText}</div>`;
+    }catch(err){
+      const msg = err.message.toLowerCase().includes('fetch')
+        ? 'Cannot connect to backend server!\n\nMake sure "python app.py" is running in your terminal.'
+        : err.message;
+      alert('Analysis Error:\n\n' + msg);
+    }finally{
+      document.getElementById('loading').style.display='none';
+      document.getElementById('analyzeBtn').disabled=false;
+    }
+  }
+
+  async function compareBills(){
+    if(!compareFile1||!compareFile2)return;
+    document.getElementById('compareLoading').style.display='block';
+    document.getElementById('compareResults').style.display='none';
+    document.getElementById('compareBtn').disabled=true;
+    const formData=new FormData();
+    formData.append('bill1',compareFile1);
+    formData.append('bill2',compareFile2);
+    formData.append('bill_type',selectedBillType);
+    formData.append('language',currentLanguage);
+    try{
+      const res=await fetch('/compare',{method:'POST',body:formData});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok){
+        throw new Error(data.error || ('Server returned error '+res.status));
+      }
+      displayCompareResults(data);
+    }catch(err){
+      const msg = err.message.toLowerCase().includes('fetch')
+        ? 'Cannot connect to backend server!\n\nMake sure "python app.py" is running in your terminal.'
+        : err.message;
+      alert('Comparison Error:\n\n' + msg);
+    }finally{
+      document.getElementById('compareLoading').style.display='none';
+      document.getElementById('compareBtn').disabled=false;
+    }
+  }
+
+  async function sendChat(){
+    const input=document.getElementById('chatInput');
+    const question=input.value.trim();
+    if(!question||!billContext)return;
+    const chatBox=document.getElementById('chatBox');
+    chatBox.innerHTML+=`<div class="chat-msg user">${question}</div>`;
+    input.value='';
+    chatBox.scrollTop=chatBox.scrollHeight;
+    try{
+      const res=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,bill_context:billContext,language:currentLanguage})});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok){
+        throw new Error(data.error || 'Server error');
+      }
+      chatBox.innerHTML+=`<div class="chat-msg bot">${data.answer}</div>`;
+      chatBox.scrollTop=chatBox.scrollHeight;
+    }catch(err){
+      chatBox.innerHTML+=`<div class="chat-msg bot">⚠️ ${err.message}</div>`;
+    }
+  }
+
+  function getTrustColor(score){
+    if(score>=80)return'#10b981';
+    if(score>=50)return'#f97316';
+    return'#ef4444';
+  }
+
+  function displayResults(data){
+    const score=data.trust_score||0;
+    const color=getTrustColor(score);
+    const isHi = currentLanguage === 'hindi';
+    const breakdownHTML=(data.breakdown||[]).map(item=>`
+      <div class="breakdown-item">
+        <div class="breakdown-item-left">
+          <div class="breakdown-item-name">${item.item}</div>
+          <div class="breakdown-item-exp">${item.explanation}</div>
+        </div>
+        <div class="breakdown-item-right">
+          <div class="breakdown-item-amount">${item.amount}</div>
+          <span class="status-badge status-${item.status}">${item.status.toUpperCase()}</span>
+        </div>
+      </div>`).join('');
+    const redFlagsHTML=data.red_flags&&data.red_flags.length>0?`
+      <div class="section-title">${isHi ? '⚠️ पाई गई खामियां' : '⚠️ Red Flags Spotted'}</div>
+      <div class="red-flags-box">
+        ${data.red_flags.map(f=>`<div class="red-flag-item"><span>🚩</span>${f}</div>`).join('')}
+      </div>`:'';
+    const overchargeHTML=data.overcharge_amount&&data.overcharge_amount!=='0'&&data.overcharge_amount!==0
+      ?`<div class="info-box"><div class="info-box-label">${isHi ? 'संभावित अतिरिक्त वसूली' : 'Suspected Overcharge'}</div><div class="info-box-value danger">₹${data.overcharge_amount}</div></div>`
+      :`<div class="info-box"><div class="info-box-label">${isHi ? 'अतिरिक्त शुल्क स्थिति' : 'Overcharge Status'}</div><div class="info-box-value safe">${isHi ? 'उचित ✓' : 'Fair ✓'}</div></div>`;
+    document.getElementById('results').innerHTML=`
+      <div class="trust-card">
+        <div class="trust-score-ring" style="background:conic-gradient(${color} ${score}%,rgba(255,255,255,0.08) 0%);box-shadow:0 0 0 5px #0a0d16 inset;">${score}</div>
+        <div class="trust-label">${isHi ? 'बिल विश्वसनीयता स्कोर' : 'Bill Trust Score'}</div>
+        <div class="trust-name">${data.customer_name||(isHi ? 'उपभोक्ता' : 'Consumer')}</div>
+        <div class="trust-period">${data.billing_period||(isHi ? 'बिलिंग अवधि' : 'Billing Period')}</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-box"><div class="info-box-label">${isHi ? 'कुल बिल राशि' : 'Total Amount Billed'}</div><div class="info-box-value">₹${data.total_amount}</div></div>
+        ${overchargeHTML}
+      </div>
+      <div class="section-title">${isHi ? '📋 मदवार विवरण' : '📋 Itemized Breakdown'}</div>
+      <div class="breakdown-list">${breakdownHTML}</div>
+      ${redFlagsHTML}
+      <div class="section-title">${isHi ? '📝 AI ऑडिट सारांश' : '📝 AI Audit Summary'}</div>
+      <div class="summary-box">${data.summary}</div>
+      <button class="reset-btn" onclick="resetForm()">${isHi ? '↩ दूसरा बिल जांचें' : '↩ Audit Another Bill'}</button>`;
+    document.getElementById('results').style.display='block';
+    document.getElementById('results').scrollIntoView({behavior:'smooth'});
+  }
+
+  function displayCompareResults(data){
+    const diff=parseFloat(data.difference)||0;
+    const pct=parseFloat(data.percentage_change)||0;
+    const isUp=diff>0;
+    const isHi = currentLanguage === 'hindi';
+    const upText = isHi ? 'वृद्धि' : 'increase';
+    const downText = isHi ? 'कमी' : 'decrease';
+    document.getElementById('compareResults').innerHTML=`
+      <div class="compare-card">
+        <div class="compare-grid-res">
+          <div class="compare-bill-box">
+            <div class="compare-bill-label">${isHi ? 'पुराना बिल' : 'Older Bill'}</div>
+            <div class="compare-bill-period">${data.bill1.period}</div>
+            <div class="compare-bill-amount">₹${data.bill1.total}</div>
+          </div>
+          <div class="compare-arrow">→</div>
+          <div class="compare-bill-box">
+            <div class="compare-bill-label">${isHi ? 'नया बिल' : 'Recent Bill'}</div>
+            <div class="compare-bill-period">${data.bill2.period}</div>
+            <div class="compare-bill-amount">₹${data.bill2.total}</div>
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div class="diff-badge ${isUp?'diff-up':'diff-down'}">${isUp?'📈 +':'📉 '}₹${Math.abs(diff)} (${Math.abs(pct)}% ${isUp?upText:downText})</div>
+          <div class="compare-reason">${data.reason}</div>
+        </div>
+        <div class="compare-advice">💡 ${data.advice}</div>
+      </div>
+      <button class="reset-btn" onclick="resetCompare()">${isHi ? '↩ पुनः तुलना करें' : '↩ Compare Again'}</button>`;
+    document.getElementById('compareResults').style.display='block';
+  }
+
+  function resetForm(){
+    selectedFile=null;billContext='';
+    const fn = document.getElementById('fileName');
+    fn.textContent='';fn.style.display='none';
+    document.getElementById('fileInput').value='';
+    document.getElementById('analyzeBtn').disabled=true;
+    document.getElementById('results').style.display='none';
+    document.getElementById('chatSection').style.display='none';
+  }
+
+  function resetCompare(){
+    compareFile1=null;compareFile2=null;
+    document.getElementById('cfile1').textContent='No file chosen';
+    document.getElementById('cfile2').textContent='No file chosen';
+    document.getElementById('compareBtn').disabled=true;
+    document.getElementById('compareResults').style.display='none';
+  }
+
+  function copyTemplate(){
+    const text = document.getElementById('letterTemplate').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+      alert('📋 Grievance letter template copied to clipboard! You can paste it into your email or document.');
+    }).catch(()=>{
+      alert('Unable to copy automatically. Please select and copy the text manually.');
+    });
+  }
+
+  async function checkHealth(){
+    try{
+      const res = await fetch('/health');
+      const data = await res.json();
+      const dot = document.getElementById('keyDot');
+      const label = document.getElementById('keyLabel');
+      const status = document.getElementById('currentStatus');
+      if(data.gemini_configured){
+        dot.className = 'status-dot active';
+        label.textContent = 'Gemini (Free)';
+        if(status) status.innerHTML = '<span style="color:#10b981">🟢 Active: Google Gemini (Free Tier)</span>';
+      } else if(data.anthropic_configured){
+        dot.className = 'status-dot';
+        label.textContent = 'Claude configured';
+        if(status) status.innerHTML = '<span style="color:#ef4444">🔴 Claude (Credits expired - add Gemini key)</span>';
+      } else {
+        dot.className = 'status-dot';
+        label.textContent = 'AI not configured';
+        if(status) status.innerHTML = '<span style="color:#f97316">⚠️ No API Key Configured</span>';
+      }
+    }catch(e){
+      const dot = document.getElementById('keyDot');
+      const label = document.getElementById('keyLabel');
+      if(dot) dot.className = 'status-dot';
+      if(label) label.textContent = 'Server Offline';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', checkHealth);
+</script>
+</body>
+</html>

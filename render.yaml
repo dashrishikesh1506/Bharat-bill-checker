@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: bharat-bill-checker
+    runtime: python
+    buildCommand: pip install -r requirements-deploy.txt
+    startCommand: gunicorn app:app
+    plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
